@@ -1,14 +1,14 @@
 'use strict';
 
-const STATUS = Object.freeze({
-  IDLE: 'idle',
-  PLAYING: 'playing',
-  WIN: 'win',
-  LOSE: 'lose',
-});
-
 class Game {
-  BOARD_SIZE = 4;
+  static STATUS = Object.freeze({
+    IDLE: 'idle',
+    PLAYING: 'playing',
+    WIN: 'win',
+    LOSE: 'lose',
+  });
+
+  static BOARD_SIZE = 4;
 
   /**
    * Creates a new game instance.
@@ -35,11 +35,11 @@ class Game {
     this.initialState = initialState;
     this.state = structuredClone(initialState);
     this.score = 0;
-    this.status = STATUS.IDLE;
+    this.status = Game.STATUS.IDLE;
   }
 
   moveLeft() {
-    if (this.status !== STATUS.PLAYING) {
+    if (this.status !== Game.STATUS.PLAYING) {
       return;
     }
 
@@ -49,7 +49,7 @@ class Game {
   }
 
   moveRight() {
-    if (this.status !== STATUS.PLAYING) {
+    if (this.status !== Game.STATUS.PLAYING) {
       return;
     }
 
@@ -61,7 +61,7 @@ class Game {
     this.afterMove();
   }
   moveUp() {
-    if (this.status !== STATUS.PLAYING) {
+    if (this.status !== Game.STATUS.PLAYING) {
       return;
     }
 
@@ -71,7 +71,7 @@ class Game {
   }
 
   moveDown() {
-    if (this.status !== STATUS.PLAYING) {
+    if (this.status !== Game.STATUS.PLAYING) {
       return;
     }
 
@@ -112,7 +112,7 @@ class Game {
    * Starts the game.
    */
   start() {
-    this.status = STATUS.PLAYING;
+    this.status = Game.STATUS.PLAYING;
     this.spawnTile();
     this.spawnTile();
   }
@@ -121,7 +121,7 @@ class Game {
    * Resets the game.
    */
   restart() {
-    this.status = STATUS.IDLE;
+    this.status = Game.STATUS.IDLE;
     this.score = 0;
     this.state = structuredClone(this.initialState);
   }
@@ -129,8 +129,8 @@ class Game {
   spawnTile() {
     const emptyCells = [];
 
-    for (let i = 0; i < this.BOARD_SIZE; i++) {
-      for (let j = 0; j < this.BOARD_SIZE; j++) {
+    for (let i = 0; i < Game.BOARD_SIZE; i++) {
+      for (let j = 0; j < Game.BOARD_SIZE; j++) {
         if (this.state[i][j] === 0) {
           emptyCells.push([i, j]);
         }
@@ -163,32 +163,32 @@ class Game {
       }
     }
 
-    return merged.concat(Array(this.BOARD_SIZE - merged.length).fill(0));
+    return merged.concat(Array(Game.BOARD_SIZE - merged.length).fill(0));
   }
 
   checkMovesLeft() {
-    for (let i = 0; i < this.BOARD_SIZE; i++) {
-      for (let j = 0; j < this.BOARD_SIZE; j++) {
+    for (let i = 0; i < Game.BOARD_SIZE; i++) {
+      for (let j = 0; j < Game.BOARD_SIZE; j++) {
         if (this.state[i][j] === 0) {
           return;
         }
 
         if (
-          (j + 1 < this.BOARD_SIZE &&
+          (j + 1 < Game.BOARD_SIZE &&
             this.state[i][j] === this.state[i][j + 1]) ||
-          (i + 1 < this.BOARD_SIZE && this.state[i][j] === this.state[i + 1][j])
+          (i + 1 < Game.BOARD_SIZE && this.state[i][j] === this.state[i + 1][j])
         ) {
           return;
         }
       }
     }
 
-    this.status = STATUS.LOSE;
+    this.status = Game.STATUS.LOSE;
   }
 
   checkWin() {
     if (this.state.some((row) => row.some((cell) => cell === 2048))) {
-      this.status = STATUS.WIN;
+      this.status = Game.STATUS.WIN;
     }
   }
 
@@ -196,7 +196,7 @@ class Game {
     this.spawnTile();
     this.checkWin();
 
-    if (this.status === STATUS.PLAYING) {
+    if (this.status === Game.STATUS.PLAYING) {
       this.checkMovesLeft();
     }
   }
